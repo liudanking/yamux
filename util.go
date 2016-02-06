@@ -26,3 +26,11 @@ func min(a, b uint32) uint32 {
 	}
 	return b
 }
+
+// max computes the maximum of two values
+func max(a, b uint32) uint32 {
+	if a < b {
+		return b
+	}
+	return a
+}

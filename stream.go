@@ -371,7 +371,10 @@ func (s *Stream) incrSendWindow(hdr header, flags uint16) error {
 	}
 
 	// Increase window, unblock a sender
-	atomic.AddUint32(&s.sendWindow, hdr.Length())
+	sndw := atomic.LoadUint32(&s.sendWindow)
+	sndw = min(s.session.config.MaxStreamWindowSize, max(sndw+hdr.Length(), sndw*2))
+	atomic.StoreUint32(&s.sendWindow, sndw)
+	// atomic.AddUint32(&s.sendWindow, hdr.Length())
 	asyncNotify(s.sendNotifyCh)
 	return nil
 }
