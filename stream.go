@@ -237,6 +237,8 @@ func (s *Stream) sendWindowUpdate() error {
 
 	// Check if we can omit the update
 	if delta < (max/2) && flags == 0 {
+		rcvw := atomic.LoadUint32(&s.recvWindow)
+		atomic.AddUint32(&s.recvWindow, min(s.session.config.MaxStreamWindowSize, rcvw+1024))
 		return nil
 	}
 
